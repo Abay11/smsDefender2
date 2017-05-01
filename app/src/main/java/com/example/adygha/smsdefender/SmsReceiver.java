@@ -20,6 +20,8 @@ public class SmsReceiver extends BroadcastReceiver {
     String toastText = "Новое сообщение";
     String originatingAddress = "";
     String smsBody = "";
+
+
     @Override
     public void onReceive(Context context, Intent intent) {
         if(intent.getAction().equals(SMS_RECEIVED)){
@@ -41,6 +43,10 @@ public class SmsReceiver extends BroadcastReceiver {
                         abortBroadcast();
                         Log.d(TAG, "aborted broadcast");
                         toastText = "Нежелательное содержимое! Сообщение удалено.";
+
+                        DatabaseHandler handler = new DatabaseHandler(context);
+                        handler.addSMS(originatingAddress, smsBody);
+
                         Uri inboxURI = Uri.parse("content://sms/");
 //                        ContentResolver cr = context.getContentResolver();
                         Cursor cur = context.getContentResolver().query(inboxURI, new String[]{"_id"}, null, null, null);

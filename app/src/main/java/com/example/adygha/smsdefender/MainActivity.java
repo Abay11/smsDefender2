@@ -13,6 +13,7 @@ import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Adapter;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -27,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     final String SMS_RECEIVED = "android.provider.Telephony.SMS_RECEIVED";
     IntentFilter filter = new IntentFilter(SMS_RECEIVED);
     BroadcastReceiver receiver;
+
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,10 +54,11 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "Unregister smsReceiver");
     }
 
-    public void onClickButton(View view) {
+    public void onClickButtonScan(View view) {
         int count = 0, malignant = 0;
         Uri inboxURI = Uri.parse("content://sms/");
         Cursor cur = getContentResolver().query(inboxURI, new String[]{"_id", "body", "address"}, null, null, null);
+        DatabaseHandler handler = new DatabaseHandler(this);
         if(cur.moveToFirst()){
             do {
                 count++;
@@ -68,9 +71,12 @@ public class MainActivity extends AppCompatActivity {
                         smsBody.toLowerCase().contains("карт") ||
                         smsBody.toLowerCase().contains("списано") ||
                         smsBody.toLowerCase().contains("руб.")) && address.length() > 4){
-                    Log.d(TAG, "address: " + address  + " id: " + cur.getString(0));
                     String msgID = cur.getString(0);
                     getContentResolver().delete(Uri.parse("content://sms/" + msgID), null, null);
+
+                    handler.addSMS(address, smsBody); // adding sms at BD
+
+                    Log.d(TAG, "address: " + address  + " id: " + cur.getString(0));
                     Log.d(TAG, "smsBody: "  + smsBody);
                     malignant++;
                 }
@@ -99,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d("MYTAG", "add sms");
         }catch(android.database.sqlite.SQLiteException e){
             Log.e("MY_EXCEPTION", "DB is empty");
-        }
+    }
     }
 
     public void onClickButton4(View view) {
@@ -119,5 +125,18 @@ public class MainActivity extends AppCompatActivity {
     public void onClickButton5(View view) {
         DatabaseHandler handler = new DatabaseHandler(this);
         handler.deleteDB(this);
+    }
+
+    public static void insert(){
+
+    }
+
+    public void onClickReloadList(View view) {
+        DatabaseHandler handler = new DatabaseHandler(this);
+        Cursor cursor = handler.getCursor();
+        String[] from = {"address", "smsBody"};
+        int[] to = {R.id.number_entry, R.id.smsBody_entry};
+        SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.number_and_smsbody, cursor, from, to, 0);
+        listView.setAdapter(adapter);
     }
 }

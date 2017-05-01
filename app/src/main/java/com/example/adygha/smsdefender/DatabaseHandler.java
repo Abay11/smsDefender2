@@ -42,7 +42,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     //code to add new melignant sms
-    void addSMS(String address, String smsBody){
+    public void addSMS(String address, String smsBody){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values =  new ContentValues();
         values.put(KEY_ADDRESS, address);
@@ -53,9 +53,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     //code to get the cursor
-    Cursor getCursor(){
+    public Cursor getCursor(){
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT " + KEY_ADDRESS + ", " + KEY_SMSBODY + " FROM " + TABLE_SMS, null);
+        Cursor cursor = db.rawQuery("SELECT " + KEY_ID + ", " + KEY_ADDRESS + ", " + KEY_SMSBODY + " FROM " + TABLE_SMS, null);
         return cursor;
     }
 
