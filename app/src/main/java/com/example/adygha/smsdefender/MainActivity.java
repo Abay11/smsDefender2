@@ -2,6 +2,7 @@ package com.example.adygha.smsdefender;
 
 import android.Manifest;
 import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -23,7 +24,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     public final String TAG = "SMSDefender log";
-    public ListView listView;
+    public static ListView listView;
 
     final String SMS_RECEIVED = "android.provider.Telephony.SMS_RECEIVED";
     IntentFilter filter = new IntentFilter(SMS_RECEIVED);
@@ -43,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
         registerReceiver(receiver, new IntentFilter(SMS_RECEIVED));
 
         listView = (ListView)findViewById(R.id.listView);
+
+        updateListView(this);
 
 
     }
@@ -127,16 +130,26 @@ public class MainActivity extends AppCompatActivity {
         handler.deleteDB(this);
     }
 
-    public static void insert(){
-
+    public void updateListView(Context context){
+        DatabaseHandler handler = new DatabaseHandler(context);
+        Cursor cursor = handler.getCursor();
+        String[] from = {"address", "smsBody"};
+        int[] to = {R.id.number_entry, R.id.smsBody_entry};
+        SimpleCursorAdapter adapter = new SimpleCursorAdapter(context, R.layout.number_and_smsbody, cursor, from, to, 0);
+        listView.setAdapter(adapter);
     }
 
-    public void onClickReloadList(View view) {
-        DatabaseHandler handler = new DatabaseHandler(this);
+    public  void onClickReloadList(View view) {
+        /*DatabaseHandler handler = new DatabaseHandler(this);
         Cursor cursor = handler.getCursor();
         String[] from = {"address", "smsBody"};
         int[] to = {R.id.number_entry, R.id.smsBody_entry};
         SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.number_and_smsbody, cursor, from, to, 0);
-        listView.setAdapter(adapter);
+        listView.setAdapter(adapter);*/
+
+        updateListView(this);
+        Log.d("MYLOG", "setListView");
     }
+
+
 }

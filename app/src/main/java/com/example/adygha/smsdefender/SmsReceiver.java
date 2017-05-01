@@ -6,9 +6,13 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.telephony.SmsMessage;
 import android.util.Log;
+import android.widget.ListView;
 import android.widget.Toast;
+
+import static com.example.adygha.smsdefender.R.id.listView;
 
 /**
  * Created by adygha on 27.04.2017.
@@ -47,6 +51,7 @@ public class SmsReceiver extends BroadcastReceiver {
                         DatabaseHandler handler = new DatabaseHandler(context);
                         handler.addSMS(originatingAddress, smsBody);
 
+
                         Uri inboxURI = Uri.parse("content://sms/");
 //                        ContentResolver cr = context.getContentResolver();
                         Cursor cur = context.getContentResolver().query(inboxURI, new String[]{"_id"}, null, null, null);
@@ -58,13 +63,20 @@ public class SmsReceiver extends BroadcastReceiver {
                             Log.d(TAG, "deleted smsId: " + cur.getString(0));
                         } while (cur.moveToNext());
                         cur.close();
+                        updateListView(context);
                     }
                 }
                 Toast.makeText(context, toastText, Toast.LENGTH_LONG).show();
 
             }
         }
-
-
+    }
+    public void updateListView(Context context){
+        DatabaseHandler handler = new DatabaseHandler(context);
+        Cursor cursor = handler.getCursor();
+        String[] from = {"address", "smsBody"};
+        int[] to = {R.id.number_entry, R.id.smsBody_entry};
+        SimpleCursorAdapter adapter = new SimpleCursorAdapter(context, R.layout.number_and_smsbody, cursor, from, to, 0);
+        MainActivity.listView.setAdapter(adapter);
     }
 }
