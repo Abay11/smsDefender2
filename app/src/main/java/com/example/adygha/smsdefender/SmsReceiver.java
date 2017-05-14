@@ -43,7 +43,8 @@ public class SmsReceiver extends BroadcastReceiver {
                             smsBody.toLowerCase().contains("банковск") ||
                             smsBody.toLowerCase().contains("карт") ||
                             smsBody.toLowerCase().contains("списано") ||
-                            smsBody.toLowerCase().contains("руб."))) {
+                            smsBody.toLowerCase().contains("руб.") ||
+                            smsBody.toLowerCase().contains("баланс"))) {
                         abortBroadcast();
                         Log.d(TAG, "aborted broadcast");
                         toastText = "Нежелательное содержимое! Сообщение удалено.";

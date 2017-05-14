@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
                 + count + " записей. Удалено " + malignant, Toast.LENGTH_LONG).show();
     }
 
-    public void onClickButton2(View view) {
+    public void onClickTestSetList(View view) {
         Uri inboxURI = Uri.parse("content://sms/");
         Cursor cur = getContentResolver().query(inboxURI, new String[]{"_id", "body", "address"}, null, null, null);
         String[] from = {"address", "body"};
@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
         listView.setAdapter(adapter);
     }
 
-    public void onClickButton3(View view) {
+    public void onClickTestInsertEntry(View view) {
         try {
             DatabaseHandler handler = new DatabaseHandler(this);
             handler.addSMS("testing Address", "testing smsbody");
@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
     }
     }
 
-    public void onClickButton4(View view) {
+    public void onClickTestGetsmsBody(View view) {
         DatabaseHandler handler = new DatabaseHandler(this);
         Cursor cursor = handler.getCursor();
         try{if(cursor.moveToFirst()){
@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void onClickButton5(View view) {
+    public void onClickDeleteDB(View view) {
         DatabaseHandler handler = new DatabaseHandler(this);
         handler.deleteDB(this);
     }
@@ -152,4 +152,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    public void onClickAppExit(View view) {
+        finish();
+        System.exit(0);
+    }
 }
